@@ -1,4 +1,4 @@
-# 🚀 voidvision - space station safety monitor
+# voidvision - space station safety monitor
 
 > ai-powered safety equipment detection for space station environments
 
@@ -7,14 +7,14 @@
 [![streamlit](https://img.shields.io/badge/streamlit-app-red.svg)](https://streamlit.io/)
 [![hackathon](https://img.shields.io/badge/hackathon-duality%20ai-orange.svg)](https://duality.ai/)
 
-## 🌟 overview
+## overview
 
 voidvision is an advanced object detection system designed to identify critical safety equipment in space station environments. using yolov8 architecture and synthetic data from duality ai's falcon platform, we've created a comprehensive safety monitoring solution that ensures astronaut safety through automated equipment detection.
 
-### 🎯 hackathon challenge
+### hackathon challenge
 **duality ai space station challenge #2** - develop an ai system to detect safety equipment in space station environments using synthetic data from digital twin platforms.
 
-## ✨ key features
+## key features
 
 - **real-time detection** of 7 critical safety equipment types
 - **interactive web interface** with space-themed design
@@ -24,25 +24,26 @@ voidvision is an advanced object detection system designed to identify critical 
 - **confidence threshold adjustment** for fine-tuned detection
 - **detection history tracking** for safety audits
 
-## 🛠️ safety equipment detected
+## safety equipment detected
 
 | equipment | purpose | criticality |
 |-----------|---------|-------------|
-| 🫁 oxygen tank | life support | critical |
-| 🧊 nitrogen tank | life support | critical |
-| 🏥 first aid box | emergency medical | high |
-| 🔥 fire alarm | fire safety | high |
-| ⚡ safety switch panel | control interface | medium |
-| 📞 emergency phone | communication | medium |
-| 🧯 fire extinguisher | fire suppression | high |
+| oxygen tank | life support | critical |
+| nitrogen tank | life support | critical |
+| first aid box | emergency medical | high |
+| fire alarm | fire safety | high |
+| safety switch panel | control interface | medium |
+| emergency phone | communication | medium |
+| fire extinguisher | fire suppression | high |
 
-## 📊 performance metrics
+## performance metrics
 
-### baseline results
-- **mAP@0.5**: 35.7% (solid foundation for optimization)
-- **precision**: 46.7% (good accuracy when detecting)
-- **recall**: 34.4% (room for improvement)
-- **training time**: 29.8 minutes (cpu-optimized)
+### final results (train6 - 5 epochs)
+- **map@0.5**: 68.98% (significant improvement from baseline)
+- **precision**: 81.22% (excellent accuracy)
+- **recall**: 62.04% (good detection coverage)
+- **map@0.5-95**: 52.98% (strong overall performance)
+- **training time**: ~2.5 hours (cpu-optimized)
 
 ### dataset statistics
 - **total images**: 3,511 synthetic images
@@ -51,12 +52,13 @@ voidvision is an advanced object detection system designed to identify critical 
 - **test set**: 1,408 images
 - **classes**: 7 safety equipment types
 
-## 🚀 quick start
+## quick start
 
 ### prerequisites
 - python 3.10+
 - anaconda/miniconda
 - 8gb+ ram recommended
+- windows 10/11 (tested on windows 10)
 
 ### installation
 
@@ -91,115 +93,348 @@ streamlit run safety_monitor_app.py
 python demo_safety_monitor.py
 ```
 
-## 🖥️ application interface
+## step-by-step instructions
 
-### space station safety monitor
+### 1. environment setup
+
+#### option a: using provided scripts
+```bash
+cd Hackthon_Dataset/Hackathon2_scripts/ENV_SETUP
+# run the batch file to create environment
+create_env.bat
+# activate the environment
+activate.bat
+# install packages
+install_packages.bat
+```
+
+#### option b: manual setup
+```bash
+# create conda environment
+conda create --name EDU python=3.10 -y
+conda activate EDU
+
+# install core dependencies
+pip install ultralytics>=8.3.0
+pip install torch>=2.5.0
+pip install torchvision>=0.20.0
+pip install streamlit>=1.28.0
+pip install opencv-python>=4.8.0
+pip install pillow>=10.0.0
+pip install numpy>=1.24.0
+```
+
+### 2. training the model
+
+#### basic training
+```bash
+cd Hackthon_Dataset/Hackathon2_scripts
+python train.py
+```
+
+#### advanced training with custom parameters
+```bash
+python train.py --epochs 50 --lr0 0.001 --mosaic 0.8 --optimizer AdamW
+```
+
+#### training parameters
+- `--epochs`: number of training epochs (default: 50)
+- `--lr0`: initial learning rate (default: 0.001)
+- `--lrf`: final learning rate (default: 0.01)
+- `--mosaic`: mosaic augmentation probability (default: 0.8)
+- `--optimizer`: optimizer type (default: AdamW)
+- `--momentum`: sgd momentum (default: 0.937)
+
+### 3. running predictions
+
+#### test set evaluation
+```bash
+cd Hackthon_Dataset/Hackathon2_scripts
+python predict.py
+```
+
+this will:
+- load the best trained model
+- process all test images
+- save predictions with bounding boxes
+- generate evaluation metrics
+- create output directories: `predictions/images/` and `predictions/labels/`
+
+#### single image prediction
+```python
+from ultralytics import YOLO
+import cv2
+
+# load model
+model = YOLO('runs/detect/train6/weights/best.pt')
+
+# predict on single image
+results = model.predict('path/to/image.jpg', conf=0.5)
+
+# display results
+for result in results:
+    img = result.plot()
+    cv2.imshow('Prediction', img)
+    cv2.waitKey(0)
+```
+
+### 4. using the web application
+
+#### launch streamlit app
+```bash
+streamlit run safety_monitor_app.py
+```
+
+#### features available:
 - **real-time detection**: upload images or use camera input
 - **equipment status**: live monitoring of all safety equipment
 - **alert system**: immediate notifications for missing equipment
-- **confidence adjustment**: fine-tune detection sensitivity
+- **confidence adjustment**: fine-tune detection sensitivity (0.1-0.9)
 - **history tracking**: view past detection results
+- **json export**: download detection results for analysis
 
-### demo script
-- **automated detection**: batch processing of test images
-- **safety reporting**: generate comprehensive safety reports
-- **json export**: structured data for further analysis
+### 5. demo script usage
 
-## 📁 project structure
+```bash
+python demo_safety_monitor.py
+```
+
+this script provides:
+- automated batch processing of test images
+- comprehensive safety reports
+- json export of detection results
+- performance metrics calculation
+
+## project structure
 
 ```
 voidvision/
-├── 📄 readme.md                    # project documentation
-├── 📄 requirements.txt             # python dependencies
-├── 📄 performance_report.md        # comprehensive analysis report
-├── 📄 progress_tracking.md         # development progress
-├── 🚀 safety_monitor_app.py        # main streamlit application
-├── 🔧 demo_safety_monitor.py       # demo script
-├── 🤖 train.py                     # model training script
-├── 📊 predict.py                   # prediction script
-├── 🎨 visualize.py                 # visualization utilities
-├── ⚙️ yolo_params.yaml             # model configuration
-├── 🏷️ classes.txt                  # class definitions
-└── 📁 hackthon_dataset/            # training data and scripts
+├── readme.md                    # project documentation
+├── requirements.txt             # python dependencies
+├── performance_report.md        # comprehensive analysis report
+├── progress_tracking.md         # development progress
+├── safety_monitor_app.py        # main streamlit application
+├── demo_safety_monitor.py       # demo script
+├── train_optimized.py           # optimized training script
+├── predict.py                   # prediction script
+├── visualize.py                 # visualization utilities
+├── yolo_params.yaml             # model configuration
+├── classes.txt                  # class definitions
+└── hackthon_dataset/            # training data and scripts
     └── hackathon2_scripts/
-        ├── 🎯 yolov8s.pt           # trained model weights
-        ├── 📈 runs/                # training results
-        └── 📁 env_setup/            # environment setup
+        ├── yolov8s.pt           # pre-trained model weights
+        ├── runs/                # training results
+        │   └── detect/
+        │       ├── train6/      # best training run (5 epochs)
+        │       │   ├── weights/
+        │       │   │   ├── best.pt # best model weights
+        │       │   │   └── last.pt # last epoch weights
+        │       │   ├── results.csv # training metrics
+        │       │   └── *.png       # training plots
+        │       └── train7/       # additional training run
+        ├── env_setup/           # environment setup scripts
+        └── predictions/         # prediction outputs
 ```
 
-## 🔬 technical approach
+## technical approach
 
 ### model architecture
 - **base model**: yolov8s (small variant for efficiency)
 - **input size**: 640x640 pixels
 - **classes**: 7 safety equipment categories
-- **optimizer**: adamw with learning rate 0.0001
-- **augmentation**: mosaic, flip, color jitter
+- **optimizer**: adamw with learning rate 0.001
+- **augmentation**: mosaic (0.8), flip (0.5), color jitter
 
 ### training process
 - **dataset**: synthetic data from falcon digital twin platform
 - **device**: cpu-optimized training
-- **epochs**: 1 (baseline) with plans for 50-100 epochs
+- **epochs**: 5 (final model) with validation every epoch
+- **batch size**: 16
 - **validation**: real-time validation during training
 
 ### optimization strategies
 - **hyperparameter tuning**: learning rate, batch size, epochs
 - **data augmentation**: enhanced mosaic, flip, rotation
-- **model variants**: yolov8s, yolov8m, yolov8l testing
-- **ensemble methods**: multiple model combination
+- **model variants**: yolov8s testing with different configurations
+- **loss functions**: box loss (7.5), class loss (0.5), dfl loss (1.5)
 
-## 📈 results and analysis
+## how to reproduce results
 
-### baseline performance
-our initial training achieved:
-- **mAP@0.5**: 35.7% - solid foundation for optimization
-- **precision**: 46.7% - good accuracy when detecting objects
-- **recall**: 34.4% - indicates room for improvement
-- **training stability**: consistent loss reduction
+### reproducing final results (train6)
 
-### optimization potential
-identified improvement areas:
-- **extended training**: increase epochs to 50-100
-- **learning rate optimization**: test higher learning rates
-- **data augmentation**: implement advanced techniques
-- **model architecture**: test larger yolov8 variants
+1. **setup environment**
+```bash
+conda create --name EDU python=3.10 -y
+conda activate EDU
+pip install -r requirements.txt
+```
 
-## 🎯 hackathon deliverables
+2. **navigate to scripts directory**
+```bash
+cd Hackthon_Dataset/Hackathon2_scripts
+```
 
-### ✅ completed
+3. **run training with exact parameters**
+```bash
+python train.py --epochs 5 --lr0 0.001 --lrf 0.01 --mosaic 0.8 --optimizer AdamW --momentum 0.937
+```
+
+4. **expected training output**
+- training time: ~2.5 hours on cpu
+- final map@0.5: ~69%
+- final precision: ~81%
+- final recall: ~62%
+
+5. **verify results**
+```bash
+# check training results
+cat runs/detect/train6/results.csv
+
+# run evaluation
+python predict.py
+```
+
+### reproducing baseline results
+
+1. **run single epoch training**
+```bash
+python train.py --epochs 1 --lr0 0.0001 --mosaic 0.4
+```
+
+2. **expected baseline performance**
+- map@0.5: ~36%
+- precision: ~47%
+- recall: ~34%
+
+## expected outputs and interpretation
+
+### training outputs
+
+#### results csv (`results.csv`)
+```csv
+epoch,time,train/box_loss,train/cls_loss,train/dfl_loss,metrics/precision(B),metrics/recall(B),metrics/mAP50(B),metrics/mAP50-95(B),val/box_loss,val/cls_loss,val/dfl_loss,lr/pg0,lr/pg1,lr/pg2
+1,2474.77,1.02452,1.95507,1.15731,0.63697,0.39349,0.4367,0.32088,0.97209,1.44367,1.08529,0.0672973,0.00033033,0.00033033
+```
+
+**interpretation:**
+- `metrics/precision(B)`: accuracy of detections (higher = fewer false positives)
+- `metrics/recall(B)`: coverage of actual objects (higher = fewer missed objects)
+- `metrics/mAP50(B)`: mean average precision at iou 0.5 (primary metric)
+- `metrics/mAP50-95(B)`: mean average precision across iou 0.5-0.95 (more strict)
+
+#### training plots
+- `results.png`: combined training metrics
+- `BoxP_curve.png`: precision curve
+- `BoxR_curve.png`: recall curve
+- `BoxPR_curve.png`: precision-recall curve
+- `confusion_matrix.png`: class-wise performance
+
+### prediction outputs
+
+#### image predictions (`predictions/images/`)
+- original images with bounding boxes drawn
+- color-coded by class
+- confidence scores displayed
+
+#### label files (`predictions/labels/`)
+```txt
+0 0.5 0.3 0.2 0.4
+1 0.7 0.6 0.15 0.25
+```
+format: `class_id x_center y_center width height` (normalized coordinates)
+
+### web application outputs
+
+#### detection results
+- real-time bounding box visualization
+- equipment status dashboard
+- confidence scores for each detection
+- missing equipment alerts
+
+#### json export format
+```json
+{
+  "timestamp": "2024-01-01T12:00:00",
+  "image_path": "test_image.jpg",
+  "detections": [
+    {
+      "class": "OxygenTank",
+      "confidence": 0.85,
+      "bbox": [100, 150, 200, 300],
+      "status": "detected"
+    }
+  ],
+  "safety_score": 85,
+  "missing_equipment": ["FireExtinguisher"]
+}
+```
+
+## troubleshooting
+
+### common issues
+
+#### 1. cuda/gpu issues
+```bash
+# force cpu usage
+export CUDA_VISIBLE_DEVICES=""
+# or modify training script to use device='cpu'
+```
+
+#### 2. memory issues
+```bash
+# reduce batch size
+python train.py --batch 8
+# or reduce image size
+python train.py --imgsz 416
+```
+
+#### 3. package compatibility
+```bash
+# reinstall with specific versions
+pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
+pip install ultralytics==8.3.0
+```
+
+#### 4. file path issues
+```bash
+# ensure you're in the correct directory
+cd Hackthon_Dataset/Hackathon2_scripts
+# check file paths in yolo_params.yaml
+```
+
+### performance optimization
+
+#### for cpu training
+- use smaller batch sizes (8-16)
+- reduce image size to 416x416
+- limit workers to 4-8
+- use mixed precision training (`amp=True`)
+
+#### for better results
+- increase training epochs (50-100)
+- use higher learning rates (0.001-0.01)
+- enable more data augmentation
+- try different model sizes (yolov8m, yolov8l)
+
+## hackathon deliverables
+
+### completed
 - [x] **baseline model training** with yolov8s
+- [x] **optimized model training** (5 epochs, 69% map@0.5)
 - [x] **comprehensive performance report** (8 pages)
 - [x] **space station safety monitor app** (streamlit)
 - [x] **real-time detection interface**
 - [x] **alert system for missing equipment**
 - [x] **demo script and documentation**
+- [x] **step-by-step reproduction guide**
 
-### 🔄 in progress
-- [ ] **model optimization** (extended training)
-- [ ] **performance visualization** (confusion matrix, loss curves)
-- [ ] **falcon integration strategy**
+### future enhancements
+- [ ] **extended training** (50-100 epochs)
+- [ ] **model ensemble** methods
+- [ ] **real-time video processing**
+- [ ] **falcon platform integration**
 
-## 🚀 future enhancements
-
-### immediate improvements
-- **extended training**: 50-100 epochs for better convergence
-- **hyperparameter optimization**: systematic grid search
-- **advanced augmentation**: rotation, scaling, color space
-- **model ensemble**: combine multiple model predictions
-
-### advanced features
-- **real-time video processing**: continuous monitoring
-- **edge deployment**: optimize for space station hardware
-- **continuous learning**: falcon platform integration
-- **multi-camera support**: distributed monitoring system
-
-### real-world deployment
-- **space station integration**: falcon platform deployment
-- **astronaut interface**: simplified monitoring dashboard
-- **emergency protocols**: automated safety procedures
-- **maintenance scheduling**: predictive equipment monitoring
-
-## 🤝 contributing
+## contributing
 
 we welcome contributions to improve voidvision:
 
@@ -214,18 +449,18 @@ we welcome contributions to improve voidvision:
 - **documentation**: improve guides and examples
 - **testing**: add comprehensive test coverage
 
-## 📄 license
+## license
 
 this project is developed for the duality ai space station hackathon challenge. all rights reserved.
 
-## 🙏 acknowledgments
+## acknowledgments
 
 - **duality ai** for providing the synthetic dataset and falcon platform
 - **ultralytics** for the yolov8 framework
 - **streamlit** for the web application framework
 - **hackathon community** for inspiration and support
 
-## 📞 contact
+## contact
 
 - **team**: voidvision
 - **hackathon**: duality ai space station challenge #2
@@ -233,4 +468,4 @@ this project is developed for the duality ai space station hackathon challenge. 
 
 ---
 
-> **ensuring astronaut safety through ai-powered equipment monitoring** 🚀
+> **ensuring astronaut safety through ai-powered equipment monitoring**
