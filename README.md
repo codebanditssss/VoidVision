@@ -38,12 +38,12 @@ voidvision is an advanced object detection system designed to identify critical 
 
 ## performance metrics
 
-### final results (train6 - 5 epochs)
-- **map@0.5**: 68.98% (significant improvement from baseline)
-- **precision**: 81.22% (excellent accuracy)
-- **recall**: 62.04% (good detection coverage)
-- **map@0.5-95**: 52.98% (strong overall performance)
-- **training time**: ~2.5 hours (cpu-optimized)
+### final results (train11 - 5 epochs)
+- **map@0.5**: 73.18% (significant improvement from baseline)
+- **precision**: 87.96% (excellent accuracy)
+- **recall**: 64.45% (good detection coverage)
+- **map@0.5-95**: 58.26% (strong overall performance)
+- **training time**: ~6 hours (cpu-optimized)
 
 ### dataset statistics
 - **total images**: 3,511 synthetic images
@@ -166,7 +166,7 @@ from ultralytics import YOLO
 import cv2
 
 # load model
-model = YOLO('runs/detect/train6/weights/best.pt')
+model = YOLO('runs/detect/train11/weights/best.pt')
 
 # predict on single image
 results = model.predict('path/to/image.jpg', conf=0.5)
@@ -225,13 +225,13 @@ voidvision/
         ├── yolov8s.pt           # pre-trained model weights
         ├── runs/                # training results
         │   └── detect/
-        │       ├── train6/      # best training run (5 epochs)
+        │       ├── train11/     # best training run (5 epochs, 73.18% mAP@0.5)
         │       │   ├── weights/
         │       │   │   ├── best.pt # best model weights
         │       │   │   └── last.pt # last epoch weights
         │       │   ├── results.csv # training metrics
         │       │   └── *.png       # training plots
-        │       └── train7/       # additional training run
+        │       └── train6/      # previous training run (68.98% mAP@0.5)
         ├── env_setup/           # environment setup scripts
         └── predictions/         # prediction outputs
 ```
@@ -260,7 +260,7 @@ voidvision/
 
 ## how to reproduce results
 
-### reproducing final results (train6)
+### reproducing final results (train11)
 
 1. **setup environment**
 ```bash
@@ -280,15 +280,15 @@ python train.py --epochs 5 --lr0 0.001 --lrf 0.01 --mosaic 0.8 --optimizer AdamW
 ```
 
 4. **expected training output**
-- training time: ~2.5 hours on cpu
-- final map@0.5: ~69%
-- final precision: ~81%
-- final recall: ~62%
+- training time: ~6 hours on cpu
+- final map@0.5: ~73%
+- final precision: ~88%
+- final recall: ~64%
 
 5. **verify results**
 ```bash
 # check training results
-cat runs/detect/train6/results.csv
+cat runs/detect/train11/results.csv
 
 # run evaluation
 python predict.py
@@ -420,7 +420,7 @@ cd Hackthon_Dataset/Hackathon2_scripts
 
 ### completed
 - [x] **baseline model training** with yolov8s
-- [x] **optimized model training** (5 epochs, 69% map@0.5)
+- [x] **optimized model training** (5 epochs, 73.18% map@0.5)
 - [x] **comprehensive performance report** (8 pages)
 - [x] **space station safety monitor app** (streamlit)
 - [x] **real-time detection interface**
