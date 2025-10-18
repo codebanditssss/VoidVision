@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 voidvision - space station safety monitor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        .content {
+            padding: 30px;
+        }
+        .upload-section {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        .upload-section:hover {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+        .upload-section.dragover {
+            border-color: #667eea;
+            background-color: #f0f4ff;
+        }
+        .file-input {
+            display: none;
+        }
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .confidence-slider {
+            width: 200px;
+        }
+        .detect-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .detect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+        .detect-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+        .image-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .image-box {
+            flex: 1;
+            text-align: center;
+        }
+        .image-box img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .detection-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .detection-table th,
+        .detection-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .detection-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .safety-analysis {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .safety-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .status-excellent { color: #28a745; }
+        .status-good { color: #ffc107; }
+        .status-fair { color: #fd7e14; }
+        .status-poor { color: #dc3545; }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 voidvision</h1>
+            <p>ai-powered safety equipment detection for space station environments</p>
+        </div>
+        
+        <div class="content">
+            <div class="upload-section" id="uploadSection">
+                <h3>📤 upload image for detection</h3>
+                <p>drag and drop an image file or click to browse</p>
+                <input type="file" id="imageInput" class="file-input" accept="image/*">
+                <button class="upload-btn" onclick="document.getElementById('imageInput').click()">
+                    choose image
+                </button>
+            </div>
+            
+            <div class="controls">
+                <label for="confidenceSlider">confidence threshold:</label>
+                <input type="range" id="confidenceSlider" class="confidence-slider" 
+                       min="0.1" max="1.0" step="0.05" value="0.5">
+                <span id="confidenceValue">0.5</span>
+                <button class="detect-btn" id="detectBtn" onclick="detectEquipment()" disabled>
+                    🔍 detect equipment
+                </button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>analyzing image...</p>
+            </div>
+            
+            <div class="results" id="results">
+                <div class="image-container">
+                    <div class="image-box">
+                        <h4>original image</h4>
+                        <img id="originalImage" src="" alt="original image">
+                    </div>
+                    <div class="image-box">
+                        <h4>detection results</h4>
+                        <img id="detectedImage" src="" alt="detection results">
+                    </div>
+                </div>
+                
+                <div class="safety-analysis" id="safetyAnalysis">
+                    <!-- safety analysis will be populated here -->
+                </div>
+                
+                <h4>detection results</h4>
+                <table class="detection-table" id="detectionTable">
+                    <thead>
+                        <tr>
+                            <th>equipment</th>
+                            <th>confidence</th>
+                            <th>bounding box</th>
+                            <th>area</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detectionTableBody">
+                        <!-- detection results will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const uploadSection = document.getElementById('uploadSection');
+        const confidenceSlider = document.getElementById('confidenceSlider');
+        const confidenceValue = document.getElementById('confidenceValue');
+        const detectBtn = document.getElementById('detectBtn');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const originalImage = document.getElementById('originalImage');
+        const detectedImage = document.getElementById('detectedImage');
+        const safetyAnalysis = document.getElementById('safetyAnalysis');
+        const detectionTableBody = document.getElementById('detectionTableBody');
+        
+        let selectedFile = null;
+        
+        // update confidence value display
+        confidenceSlider.addEventListener('input', function() {
+            confidenceValue.textContent = this.value;
+        });
+        
+        // handle file selection
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                detectBtn.disabled = false;
+                
+                // display preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    originalImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // drag and drop functionality
+        uploadSection.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        });
+        
+        uploadSection.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+        });
+        
+        uploadSection.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    selectedFile = file;
+                    detectBtn.disabled = false;
+                    
+                    // display preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        originalImage.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+        
+        // detection function
+        async function detectEquipment() {
+            if (!selectedFile) return;
+            
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            formData.append('confidence', confidenceSlider.value);
+            
+            // show loading
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            detectBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/detect', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // display results
+                    displayResults(data);
+                } else {
+                    showError(data.error || 'detection failed');
+                }
+            } catch (error) {
+                showError('network error: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+                detectBtn.disabled = false;
+            }
+        }
+        
+        function displayResults(data) {
+            // display detected image
+            if (data.annotated_image) {
+                detectedImage.src = 'data:image/png;base64,' + data.annotated_image;
+            }
+            
+            // display safety analysis
+            const safety = data.safety_analysis;
+            safetyAnalysis.innerHTML = `
+                <h3>🛡️ safety analysis</h3>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <div>
+                        <div class="safety-score status-${safety.status}">${safety.score}%</div>
+                        <div>safety score</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #666;">${safety.status}</div>
+                        <div>status</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #666;">${data.total_detections}</div>
+                        <div>total detections</div>
+                    </div>
+                </div>
+                ${safety.missing_equipment.length > 0 ? `
+                    <div style="margin-top: 15px;">
+                        <h4>⚠️ missing equipment:</h4>
+                        ${safety.missing_equipment.map(item => 
+                            `<div style="color: #dc3545; margin: 5px 0;">
+                                ${item.equipment}: ${item.missing} missing (expected ${item.expected}, detected ${item.detected})
+                            </div>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+            `;
+            
+            // display detection table
+            detectionTableBody.innerHTML = data.detections.map(detection => `
+                <tr>
+                    <td>${detection.equipment}</td>
+                    <td>${detection.confidence}</td>
+                    <td>${detection.bbox}</td>
+                    <td>${detection.area}</td>
+                </tr>
+            `).join('');
+            
+            results.style.display = 'block';
+        }
+        
+        function showError(message) {
+            results.innerHTML = `<div class="error">❌ ${message}</div>`;
+            results.style.display = 'block';
+        }
+        
+        // check system status on load
+        fetch('/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.model_loaded) {
+                    console.log('✅ model loaded successfully');
+                } else {
+                    console.log('❌ model failed to load');
+                }
+            })
+            .catch(error => {
+                console.log('❌ failed to check system status:', error);
+            });
+    </script>
+</body>
+</html>
