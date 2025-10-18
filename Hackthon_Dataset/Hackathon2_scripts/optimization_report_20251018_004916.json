@@ -1,0 +1,158 @@
+{
+  "timestamp": "2025-10-18T00:49:16.184397",
+  "model_path": "yolov8s.pt",
+  "evaluation_results": {
+    "0.1": {
+      "total_detections": 124,
+      "class_detections": {
+        "cup": 3,
+        "sports ball": 2,
+        "clock": 6,
+        "suitcase": 9,
+        "fire hydrant": 1,
+        "book": 2,
+        "bottle": 12,
+        "person": 11,
+        "traffic light": 4,
+        "apple": 2,
+        "keyboard": 4,
+        "skateboard": 2,
+        "dining table": 4,
+        "laptop": 5,
+        "tennis racket": 2,
+        "chair": 4,
+        "train": 4,
+        "microwave": 2,
+        "toothbrush": 6,
+        "airplane": 7,
+        "car": 5,
+        "kite": 1,
+        "baseball bat": 1,
+        "bench": 7,
+        "truck": 2,
+        "oven": 1,
+        "tv": 3,
+        "remote": 1,
+        "scissors": 1,
+        "knife": 1,
+        "mouse": 1,
+        "cell phone": 6,
+        "bicycle": 1,
+        "potted plant": 1
+      },
+      "avg_detections_per_image": 2.48
+    },
+    "0.2": {
+      "total_detections": 59,
+      "class_detections": {
+        "cup": 2,
+        "suitcase": 5,
+        "bottle": 6,
+        "traffic light": 2,
+        "person": 5,
+        "apple": 1,
+        "keyboard": 3,
+        "skateboard": 1,
+        "dining table": 3,
+        "clock": 2,
+        "chair": 2,
+        "train": 3,
+        "kite": 1,
+        "toothbrush": 3,
+        "laptop": 1,
+        "baseball bat": 1,
+        "car": 3,
+        "book": 1,
+        "oven": 1,
+        "mouse": 1,
+        "airplane": 2,
+        "cell phone": 3,
+        "truck": 1,
+        "tv": 2,
+        "bench": 3,
+        "tennis racket": 1
+      },
+      "avg_detections_per_image": 1.18
+    },
+    "0.3": {
+      "total_detections": 34,
+      "class_detections": {
+        "cup": 2,
+        "bottle": 6,
+        "traffic light": 2,
+        "person": 3,
+        "apple": 1,
+        "keyboard": 1,
+        "clock": 2,
+        "kite": 1,
+        "baseball bat": 1,
+        "toothbrush": 1,
+        "dining table": 2,
+        "book": 1,
+        "suitcase": 2,
+        "mouse": 1,
+        "car": 1,
+        "airplane": 2,
+        "bench": 2,
+        "cell phone": 1,
+        "train": 1,
+        "chair": 1
+      },
+      "avg_detections_per_image": 0.68
+    },
+    "0.4": {
+      "total_detections": 21,
+      "class_detections": {
+        "bottle": 6,
+        "person": 1,
+        "clock": 1,
+        "kite": 1,
+        "baseball bat": 1,
+        "toothbrush": 1,
+        "cup": 1,
+        "suitcase": 2,
+        "mouse": 1,
+        "airplane": 1,
+        "traffic light": 1,
+        "bench": 2,
+        "dining table": 1,
+        "train": 1
+      },
+      "avg_detections_per_image": 0.42
+    },
+    "0.5": {
+      "total_detections": 14,
+      "class_detections": {
+        "bottle": 3,
+        "person": 1,
+        "clock": 1,
+        "cup": 1,
+        "suitcase": 2,
+        "mouse": 1,
+        "airplane": 1,
+        "traffic light": 1,
+        "bench": 1,
+        "dining table": 1,
+        "train": 1
+      },
+      "avg_detections_per_image": 0.28
+    }
+  },
+  "optimal_threshold": 0.1,
+  "optimization_recommendations": [
+    "use confidence threshold: 0.1",
+    "implement ensemble voting for better accuracy",
+    "apply non-maximum suppression for duplicate removal",
+    "consider class-specific thresholds for imbalanced classes"
+  ],
+  "performance_improvements": {
+    "current_baseline": "35.7% mAP@0.5",
+    "potential_improvements": [
+      "post-processing optimization: +5-10%",
+      "ensemble methods: +3-7%",
+      "confidence threshold tuning: +2-5%",
+      "class-specific optimization: +3-8%"
+    ],
+    "estimated_total_improvement": "13-30% mAP@0.5"
+  }
+}
