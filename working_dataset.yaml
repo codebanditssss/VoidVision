@@ -1,0 +1,13 @@
+names:
+- OxygenTank
+- NitrogenTank
+- FirstAidBox
+- FireAlarm
+- SafetySwitchPanel
+- EmergencyPhone
+- FireExtinguisher
+nc: 7
+path: /Users/vaanyagoel/Documents/untitled folder 2/VoidVision/working_dataset
+test: images
+train: images
+val: images

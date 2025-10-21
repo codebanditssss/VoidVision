@@ -1187,8 +1187,16 @@ class WebAppHandler(BaseHTTPRequestHandler):
             # Convert bytes to PIL Image
             image = Image.open(io.BytesIO(image_data))
             
-            # Run detection
+            # Run detection with debugging
+            print(f"🔍 Running detection on image size: {image.size}")
             results = model(image)
+            print(f"📊 Detection results: {len(results)} result(s)")
+            
+            # Debug: Check if model is working
+            if not results:
+                print("⚠️  No results returned from model")
+                self.send_error_response("Model detection failed - no results returned")
+                return
             
             # Process results
             detections = []
@@ -1201,20 +1209,35 @@ class WebAppHandler(BaseHTTPRequestHandler):
             except:
                 font = ImageFont.load_default()
             
-            for result in results:
+            for i, result in enumerate(results):
+                print(f"🔍 Processing result {i+1}/{len(results)}")
                 boxes = result.boxes
                 if boxes is not None:
-                    for box in boxes:
+                    print(f"📦 Found {len(boxes)} boxes")
+                    for j, box in enumerate(boxes):
                         # Get box coordinates
                         x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
                         conf = box.conf[0].cpu().numpy()
                         cls = int(box.cls[0].cpu().numpy())
                         
                         # Apply confidence threshold to filter out low-confidence detections
-                        # Use higher threshold for NitrogenTank due to frequent misclassifications
-                        min_conf = 0.5 if cls == 1 else 0.3  # cls=1 is NitrogenTank
+                        # Use higher threshold for problematic classes to reduce false positives
+                        if cls == 0:  # OxygenTank - often false positive
+                            min_conf = 0.7
+                        elif cls == 1:  # NitrogenTank - often misclassified
+                            min_conf = 0.6
+                        elif cls == 3:  # FireAlarm - critical for safety
+                            min_conf = 0.5
+                        elif cls == 6:  # EmergencyPhone - often confused with FireAlarm
+                            min_conf = 0.5
+                        else:
+                            min_conf = 0.4
+                        
+                        print(f"🎯 Box {j+1}: Class {cls}, Confidence {conf:.3f}, Min Required {min_conf:.3f}")
                         if conf < min_conf:
+                            print(f"❌ Filtered out - confidence too low")
                             continue
+                        print(f"✅ Detection passed - {class_name}: {conf:.3f}")
                         
                         # Get class name
                         class_names = ['OxygenTank', 'NitrogenTank', 'FirstAidBox', 'FireAlarm', 
